@@ -1,0 +1,8 @@
+[web]
+a.web.service
+b.web.service
+c.web.service
+d.web.service
+
+[db]
+[a:d].db.service

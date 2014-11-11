@@ -1,0 +1,5 @@
+# db.yml
+---
+- hosts: db
+  roles:
+    - { role: service_provider, service: 'postgresql' }

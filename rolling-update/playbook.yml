@@ -1,0 +1,34 @@
+---
+- hosts: webservers
+  serial: 1
+  max_fail_percentage: 10
+
+  pre_tasks:
+  - name: disable nagios alerts for this host
+    nagios: action=disable_alerts host={{ inventory_hostname }} services=webserver
+    delegate_to: "{{ item }}"
+    with_items: groups.monitoring
+
+  - name: disable the server in haproxy
+    shell: echo "disable server myapplb/{{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
+    delegate_to: "{{ item }}"
+    with_items: groups.lbservers
+
+  roles:
+  - common
+  - base-apache
+  - web
+
+  post_tasks:
+  - name: Wait for webserver to come up
+    wait_for: host={{ inventory_hostname }} port=80 state=started timeout=80
+
+  - name: Enable the server in haproxy
+    shell: echo "enable server myapplb/{{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
+    delegate_to: "{{ item }}"
+    with_items: groups.lbservers
+
+  - name: re-enable nagios alerts
+    nagios: action=enable_alerts host={{ inventory_hostname }} services=webserver
+    delegate_to: "{{ item }}"
+    with_items: groups.monitoring

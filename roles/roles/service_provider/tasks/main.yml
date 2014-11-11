@@ -1,0 +1,6 @@
+# roles/service_provider/tasks/main.yml
+- name: Install {{ service }}
+  apt: name={{ service }} state=latest
+
+- name: Ensure {{ service }} is started
+  service: name={{ service }} state=started

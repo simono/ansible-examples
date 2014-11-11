@@ -1,0 +1,5 @@
+# web.yml 
+---
+- hosts: web
+  roles:
+    - { role: service_provider, service: 'nginx' }

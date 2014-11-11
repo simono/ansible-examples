@@ -1,0 +1,8 @@
+# db.yml
+---
+- hosts: db
+  tasks:
+    - name: Install PostgreSQL
+      apt: name=postgresql state=latest
+    - name: Ensure PostgreSQL is started
+      service: name=postgresql state=started
